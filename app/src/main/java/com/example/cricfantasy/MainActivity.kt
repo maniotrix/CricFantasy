@@ -14,8 +14,12 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.cricfantasy.databinding.ActivityMainBinding
+import com.example.cricfantasy.ui.gallery.GalleryFragment
+import com.example.cricfantasy.ui.home.HomeFragment
+import com.example.cricfantasy.ui.slideshow.SlideshowFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
+import kotlin.random.Random
 
 
 class MainActivity : AppCompatActivity() {
@@ -43,6 +47,21 @@ class MainActivity : AppCompatActivity() {
         }
         return contentString;
     }
+    private fun setCurrentFragmentTextContent(){
+
+        val currentFragment : Fragment = getCurrentVisibleFragment()!!
+        val randomNumber = Random.Default.nextInt(100).toString()
+        if(currentFragment is GalleryFragment){
+            currentFragment.getViewModel().updateData("Gallery$randomNumber");
+        }
+        if(currentFragment is HomeFragment){
+            currentFragment.getViewModel().updateData("Home$randomNumber");
+        }
+        if(currentFragment is SlideshowFragment){
+            currentFragment.getViewModel().updateData("SlideShow$randomNumber");
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +82,9 @@ class MainActivity : AppCompatActivity() {
                 Snackbar.make(view, original, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
             }
+        }
+        binding.appBarMain.setFab.setOnClickListener {
+            setCurrentFragmentTextContent();
         }
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView

@@ -30,7 +30,7 @@ class GalleryFragment : BaseFragment() {
         val root: View = binding.root
 
         val textView: TextView = binding.textGallery
-        (fragmentViewModel as GalleryViewModel).text.observe(viewLifecycleOwner) {
+        fragmentViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
         return root

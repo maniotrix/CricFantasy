@@ -9,5 +9,9 @@ open class BaseFragmentStringViewModel (name: String): ViewModel(){
    private val _text = MutableLiveData<String>().apply {
         value = "This is $name Fragment"
     }
-   val text: LiveData<String> = _text
+    val text: LiveData<String> = _text
+
+    fun updateData(newValue : String){
+        _text.value = "This is $newValue Fragment"
+    }
 }

@@ -29,7 +29,7 @@ class SlideshowFragment : BaseFragment() {
         val root: View = binding.root
 
         val textView: TextView = binding.textSlideshow
-        (fragmentViewModel as SlideshowViewModel).text.observe(viewLifecycleOwner) {
+        fragmentViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
         return root
