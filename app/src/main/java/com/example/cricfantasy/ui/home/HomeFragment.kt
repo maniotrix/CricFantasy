@@ -43,11 +43,20 @@ class HomeFragment : BaseFragment() {
             // Dispose of the Composition when the view's LifecycleOwner
             // is destroyed
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                // In Compose world
+//            setContent {
+//                // In Compose world
+//                MaterialTheme {
+//                    val entrees: MutableList<ItemViewState> = mutableListOf<ItemViewState>()
+//                    entrees.add(ItemViewState("item1"))
+//                    entrees.add(ItemViewState("item2"))
+//                    entrees.add(ItemViewState("item3"))
+//                    entrees.add(ItemViewState("item4"))
+//                    MessageList(messages = entrees)
+//                }
+//            }
+            setContent { // In here, we can call composables!
                 MaterialTheme {
-                    val entrees: MutableList<ItemViewState> = mutableListOf<ItemViewState>()
-                    listOf(MessageList(messages = entrees))
+                    Greeting(name = "compose")
                 }
             }
         }
@@ -59,7 +68,10 @@ class HomeFragment : BaseFragment() {
         _binding = null
     }
 }
-
+@Composable
+fun Greeting(name: String) {
+    Text(text = "Hello $name!")
+}
 // A data object which describes how the list item should look
 data class ItemViewState(
     val text: String
