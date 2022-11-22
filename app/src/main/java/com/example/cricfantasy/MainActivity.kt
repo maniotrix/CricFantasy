@@ -1,6 +1,7 @@
 package com.example.cricfantasy
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
@@ -60,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         if(currentFragment is SlideshowFragment){
             currentFragment.getViewModel().updateData("SlideShow$randomNumber");
         }
+        Log.i("INFO: ","clicked fab");
     }
 
 

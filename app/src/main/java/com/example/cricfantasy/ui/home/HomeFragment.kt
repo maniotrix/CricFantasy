@@ -1,27 +1,36 @@
 package com.example.cricfantasy.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.ViewModelProvider
 import com.example.cricfantasy.BaseFragment
 import com.example.cricfantasy.databinding.FragmentHomeBinding
 
+
 class HomeFragment : BaseFragment() {
 
     private var _binding: FragmentHomeBinding? = null
+    private val entrees: MutableList<ItemViewState> = mutableListOf<ItemViewState>()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private lateinit var  composeViewModel : MyViewModel
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,6 +40,8 @@ class HomeFragment : BaseFragment() {
         fragmentViewModel =
             ViewModelProvider(this)[HomeViewModel::class.java]
 
+        composeViewModel = ViewModelProvider(this)[MyViewModel::class.java]
+
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -38,29 +49,29 @@ class HomeFragment : BaseFragment() {
         fragmentViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
+        binding.button.setOnClickListener {
+            entrees.add(ItemViewState("Item added from click"))
+            //composeViewModel.fetchItems(entrees)
+            Log.i("INFO: ","clicked click me");
+        }
 
-        binding.composeView.apply {
-            // Dispose of the Composition when the view's LifecycleOwner
-            // is destroyed
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-//            setContent {
-//                // In Compose world
-//                MaterialTheme {
-//                    val entrees: MutableList<ItemViewState> = mutableListOf<ItemViewState>()
-//                    entrees.add(ItemViewState("item1"))
-//                    entrees.add(ItemViewState("item2"))
-//                    entrees.add(ItemViewState("item3"))
-//                    entrees.add(ItemViewState("item4"))
-//                    MessageList(messages = entrees)
-//                }
-//            }
-            setContent { // In here, we can call composables!
-                MaterialTheme {
-                    Greeting(name = "compose")
-                }
+
+
+        val composeView : ComposeView = binding.composeView
+        composeView.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+        composeView.setContent {
+            // In Compose world
+            MaterialTheme {
+                ItemsScreen(viewModel = composeViewModel, entries = entrees)
+
             }
         }
+
         return root
+    }
+
+    override fun getView(): View? {
+        return super.getView()
     }
 
     override fun onDestroyView() {
@@ -92,3 +103,31 @@ fun MessageList(messages: List<ItemViewState>) {
 fun MySimpleListItem(itemViewState: ItemViewState) {
     Text(text = itemViewState.text)
 }
+
+@Composable
+fun ItemsScreen(
+    viewModel: MyViewModel ,entries : MutableList<ItemViewState>
+) {
+    // State
+    val messages = viewModel.items.observeAsState()
+    var refreshCount by remember { mutableStateOf(1) }
+
+    // API call
+    LaunchedEffect(key1 = refreshCount) {
+        viewModel.fetchItems(entries)
+    }
+
+    // UI
+    Column() {
+        IconButton(onClick = {
+            refreshCount++
+        }) {
+            Icon(Icons.Outlined.Refresh, "Refresh")
+        }
+        if(messages.value != null){
+            MessageList(messages = messages.value!!)
+        }
+
+    }
+}
+
