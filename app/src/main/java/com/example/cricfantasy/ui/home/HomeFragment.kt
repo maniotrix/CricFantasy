@@ -119,9 +119,8 @@ fun MessageList(messages: List<ItemViewState>) {
 fun MySimpleListItem(itemViewState: ItemViewState) {
     Card(modifier = Modifier
         .fillMaxSize()
-        .padding(all = 10.dp)
-        .shimmer(),
-        elevation = 8.dp, border = BorderStroke(width =  2.dp, color = Color.LightGray)
+        .padding(all = 10.dp),
+        elevation = 8.dp, border = BorderStroke(width =  1.dp, color = Color.LightGray)
     ){
         Column(
             modifier = Modifier
