@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
@@ -49,22 +47,19 @@ class HomeFragment : BaseFragment() {
         fragmentViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
-        binding.button.setOnClickListener {
-            entrees.add(ItemViewState("Item added from click"))
-            //composeViewModel.fetchItems(entrees)
-            Log.i("INFO: ","clicked click me");
-        }
+
 
 
 
         val composeView : ComposeView = binding.composeView
         composeView.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-        composeView.setContent {
-            // In Compose world
-            MaterialTheme {
-                ItemsScreen(viewModel = composeViewModel, entries = entrees)
-
-            }
+        entrees.add(ItemViewState("A new item"))
+        updateComposeView(composeView, entrees)
+        binding.button.setOnClickListener {
+            entrees.add(ItemViewState("Item added from click"))
+            updateComposeView(composeView, entrees)
+            //composeViewModel.addItem(ItemViewState("Item added from click"))
+            Log.i("INFO: ","clicked click me ${entrees.size}");
         }
 
         return root
@@ -77,6 +72,18 @@ class HomeFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun updateComposeView(composeView : ComposeView, messages : List<ItemViewState>){
+        composeView.setContent {
+            // In Compose world
+            MaterialTheme {
+//                composeViewModel.addItem(ItemViewState("Item  Initial"))
+//                ItemsScreen(viewModel = composeViewModel, entries = entrees)
+                MessageList(messages = messages)
+
+            }
+        }
     }
 }
 @Composable
@@ -109,23 +116,23 @@ fun ItemsScreen(
     viewModel: MyViewModel ,entries : MutableList<ItemViewState>
 ) {
     // State
-    val messages = viewModel.items.observeAsState()
-    var refreshCount by remember { mutableStateOf(1) }
-
-    // API call
-    LaunchedEffect(key1 = refreshCount) {
-        viewModel.fetchItems(entries)
-    }
+    val messages by viewModel.items.observeAsState()
+//    var refreshCount by remember { mutableStateOf(1) }
+//
+//    // API call
+//    LaunchedEffect(key1 = refreshCount) {
+//        viewModel.fetchItems(entries)
+//    }
 
     // UI
     Column() {
-        IconButton(onClick = {
-            refreshCount++
-        }) {
-            Icon(Icons.Outlined.Refresh, "Refresh")
-        }
-        if(messages.value != null){
-            MessageList(messages = messages.value!!)
+//        IconButton(onClick = {
+//            refreshCount++
+//        }) {
+//            Icon(Icons.Outlined.Refresh, "Refresh")
+//        }
+        if(messages != null){
+            MessageList(messages = messages!!)
         }
 
     }
