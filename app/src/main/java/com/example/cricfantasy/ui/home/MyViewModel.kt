@@ -10,11 +10,19 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 open class MyViewModel: ViewModel() {
-    private val _items = MutableLiveData<List<ItemViewState>>()
-    val items:LiveData<List<ItemViewState>>
-        get() = _items
+    private val _items = MutableLiveData<MutableList<ItemViewState>>()
 
-    fun fetchItems(items : List<ItemViewState>){
-        viewModelScope.launch { _items.value = items }
+
+    init {
+        _items.value = ArrayList()
+    }
+
+    fun getItems(): MutableLiveData<MutableList<ItemViewState>> {
+        return _items
+    }
+
+    fun addItem(new : ItemViewState){
+        _items.value?.add(new)
+        _items.value = _items.value
     }
 }

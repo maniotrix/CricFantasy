@@ -50,8 +50,8 @@ class HomeFragment : BaseFragment() {
             textView.text = it
         }
         binding.button.setOnClickListener {
-            entrees.add(ItemViewState("Item added from click"))
-            //composeViewModel.fetchItems(entrees)
+            //entrees.add(ItemViewState("Item added from click"))
+            composeViewModel.addItem(ItemViewState("Item added from click"))
             Log.i("INFO: ","clicked click me");
         }
 
@@ -109,21 +109,21 @@ fun ItemsScreen(
     viewModel: MyViewModel ,entries : MutableList<ItemViewState>
 ) {
     // State
-    val messages = viewModel.items.observeAsState()
-    var refreshCount by remember { mutableStateOf(1) }
-
-    // API call
-    LaunchedEffect(key1 = refreshCount) {
-        viewModel.fetchItems(entries)
-    }
+    val messages = viewModel.getItems().observeAsState()
+//    var refreshCount by remember { mutableStateOf(1) }
+//
+//    // API call
+//    LaunchedEffect(key1 = refreshCount) {
+//        viewModel.fetchItems(entries)
+//    }
 
     // UI
     Column() {
-        IconButton(onClick = {
-            refreshCount++
-        }) {
-            Icon(Icons.Outlined.Refresh, "Refresh")
-        }
+//        IconButton(onClick = {
+//            refreshCount++
+//        }) {
+//            Icon(Icons.Outlined.Refresh, "Refresh")
+//        }
         if(messages.value != null){
             MessageList(messages = messages.value!!)
         }
